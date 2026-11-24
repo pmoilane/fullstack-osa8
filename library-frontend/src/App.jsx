@@ -11,6 +11,7 @@ import { addBookToCache } from './utils/apolloCache'
 const App = () => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(localStorage.getItem('library-user-token'))
+  const [error, setError] = useState(null)
   const client = useApolloClient()
 
   useSubscription(BOOK_ADDED, {
@@ -22,6 +23,13 @@ const App = () => {
       addBookToCache(client.cache, addedBook)
     },
   })
+
+  const errorNotification = (message) => {
+    setError(message)
+    setTimeout(() => {
+      setError(null)
+    }, 5000)
+  }
 
   const onLogout = () => {
     setToken(null)
@@ -45,6 +53,7 @@ const App = () => {
           <button onClick={() => setPage('login')}>login</button>
         )}
       </div>
+      {error ? <div style={{ color: 'red' }}>{error}</div> : <></>}
 
       <Authors show={page === 'authors'} token={token} />
 
@@ -58,6 +67,7 @@ const App = () => {
         show={page === 'login'}
         setToken={setToken}
         setPage={setPage}
+        setError={errorNotification}
       />
     </div>
   )

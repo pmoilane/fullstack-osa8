@@ -22,7 +22,6 @@ const resolvers = {
       }
 
       args.genre ? (findArgs = { ...findArgs, genres: args.genre }) : true
-      console.log(findArgs)
       return Book.find(findArgs).populate('author', { name: 1 })
     },
     allAuthors: async (root) => {
@@ -51,10 +50,8 @@ const resolvers = {
       }
 
       let author = await Author.findOne({ name: args.author }).exec()
-      console.log('find author: ', author)
       if (!author) {
         author = new Author({ name: args.author, born: null })
-        console.log('new author: ', author)
         try {
           await author.save()
         } catch (error) {
@@ -67,7 +64,6 @@ const resolvers = {
           })
         }
       }
-      console.log('object for new book: ', { ...args, author: author })
       const book = new Book({ ...args, author: author })
       try {
         await book.save()
